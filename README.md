@@ -1,2 +1,2 @@
 # GearGo
- Equipment rental application
+ Equipment rental application.
