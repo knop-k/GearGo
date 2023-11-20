@@ -28,6 +28,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgdal-dev libgeos-dev
 
+      - name: Check installed files
+        run: |
+          ls /usr/lib
+          ls /usr/lib/x86_64-linux-gnu
+
       - name: Cache Poetry
         id: cache-poetry
         uses: actions/cache@v3
