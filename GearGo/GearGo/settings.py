@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
-import platform
 import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -137,9 +136,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-if platform.system() == 'Windows':
-    GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal305.dll'
-    GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
-else:
-    GDAL_LIBRARY_PATH = Path('/usr/lib/libgdal.so').resolve()
-    GEOS_LIBRARY_PATH = Path('/usr/lib/libgeos_c.so').resolve()
+GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal305.dll'
+GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
