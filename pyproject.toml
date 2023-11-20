@@ -11,6 +11,7 @@ django = "^4.2.7"
 python-decouple = "^3.8"
 psycopg2 = "^2.9.9"
 flake8 = "^6.1.0"
+pytest-django = "^4.7.0"
 
 
 [build-system]
