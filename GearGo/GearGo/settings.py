@@ -141,5 +141,5 @@ if platform.system() == 'Windows':
     GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal305.dll'
     GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
 else:
-    GDAL_LIBRARY_PATH = r'/usr/lib/libgdal.so'
-    GEOS_LIBRARY_PATH = r'/usr/lib/libgeos_c.so'
+    GDAL_LIBRARY_PATH = str(Path('/usr/lib/libgdal.so').resolve())
+    GEOS_LIBRARY_PATH = str(Path('/usr/lib/libgeos_c.so').resolve())
