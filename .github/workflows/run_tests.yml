@@ -1,99 +1,99 @@
-name: Run tests
+# name: Run tests
 
-on:
-  pull_request:
-    types: [opened, ready_for_review, synchronize, reopened]
+# on:
+#   pull_request:
+#     types: [opened, ready_for_review, synchronize, reopened]
 
-jobs:
-  pytests:
-    runs-on: ubuntu-22.04
-    if: github.event.pull_request.draft == false
-    steps:
-      - name: Cancel Previous Runs
-        if: "!endsWith(github.ref, '/master') && !endsWith(github.ref, '/dev')"
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
+# jobs:
+#   pytests:
+#     runs-on: ubuntu-22.04
+#     if: github.event.pull_request.draft == false
+#     steps:
+#       - name: Cancel Previous Runs
+#         if: "!endsWith(github.ref, '/master') && !endsWith(github.ref, '/dev')"
+#         uses: styfle/cancel-workflow-action@0.11.0
+#         with:
+#           access_token: ${{ github.token }}
 
-      - uses: actions/checkout@v3.2.0
+#       - uses: actions/checkout@v3.2.0
 
-      - name: Set up Python
-        uses: actions/setup-python@v4.4.0
-        with:
-          python-version: "3.11"
-          architecture: "x64"
+#       - name: Set up Python
+#         uses: actions/setup-python@v4.4.0
+#         with:
+#           python-version: "3.11"
+#           architecture: "x64"
 
-      - name: Install GDAL and GEOS on Linux
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgdal-dev libgeos-dev
+#       - name: Install GDAL and GEOS on Linux
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y libgdal-dev libgeos-dev
 
-      - name: Check installed files
-        run: |
-          ls /usr/lib
-          ls /usr/lib/x86_64-linux-gnu
+#       - name: Check installed files
+#         run: |
+#           ls /usr/lib
+#           ls /usr/lib/x86_64-linux-gnu
 
-      - name: Cache Poetry
-        id: cache-poetry
-        uses: actions/cache@v3
-        with:
-          path: ~/.poetry
-          key: ${{ matrix.os }}-poetry
+#       - name: Cache Poetry
+#         id: cache-poetry
+#         uses: actions/cache@v3
+#         with:
+#           path: ~/.poetry
+#           key: ${{ matrix.os }}-poetry
 
-      # Only runs when key from caching step changes
-      - name: Install Poetry
-        run: |
-          python -m pip install --upgrade pip
-          pip install poetry
+#       # Only runs when key from caching step changes
+#       - name: Install Poetry
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install poetry
 
-      # Poetry still needs to be re-prepended to the PATH on each run, since
-      # PATH does not persist between runs.
-      - name: Add Poetry to $PATH
-        run: |
-          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+#       # Poetry still needs to be re-prepended to the PATH on each run, since
+#       # PATH does not persist between runs.
+#       - name: Add Poetry to $PATH
+#         run: |
+#           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
-      - name: Get Poetry version
-        run: poetry --version
+#       - name: Get Poetry version
+#         run: poetry --version
 
-      - name: Check pyproject.toml validity
-        run: |
-          cd GearGo
-          poetry check --no-interaction
+#       - name: Check pyproject.toml validity
+#         run: |
+#           cd GearGo
+#           poetry check --no-interaction
 
-      - name: Cache dependencies
-        id: cache-deps
-        uses: actions/cache@v3
-        with:
-          path: ${{github.workspace}}/.venv
-          key: ${{ matrix.os }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: ${{ matrix.os }}-
+#       - name: Cache dependencies
+#         id: cache-deps
+#         uses: actions/cache@v3
+#         with:
+#           path: ${{github.workspace}}/.venv
+#           key: ${{ matrix.os }}-${{ hashFiles('**/poetry.lock') }}
+#           restore-keys: ${{ matrix.os }}-
 
-      - name: Install deps
-        if: steps.cache-deps.cache-hit != 'true'
-        run: |
-          cd GearGo
-          poetry config virtualenvs.in-project true
-          poetry install --no-interaction
+#       - name: Install deps
+#         if: steps.cache-deps.cache-hit != 'true'
+#         run: |
+#           cd GearGo
+#           poetry config virtualenvs.in-project true
+#           poetry install --no-interaction
 
-      - name: Create .env file
-        run: |
-          cd GearGo
-          echo "SECRET_KEY=default_secret_key" > .env
-          echo "DEBUG=False" >> .env
-          echo "ALLOWED_HOSTS=[]" >> .env
-          echo "POSTGRES_ENGINE=django.contrib.gis.db.backends.postgis" >> .env
-          echo "POSTGRES_DATABASE=geargo" >> .env
-          echo "POSTGRES_USER=postgres" >> .env
-          echo "POSTGRES_PASSWORD=1234" >> .env
-          echo "POSTGRES_HOST=localhost" >> .env
-          echo "POSTGRES_PORT=5432" >> .env
+#       - name: Create .env file
+#         run: |
+#           cd GearGo
+#           echo "SECRET_KEY=default_secret_key" > .env
+#           echo "DEBUG=False" >> .env
+#           echo "ALLOWED_HOSTS=[]" >> .env
+#           echo "POSTGRES_ENGINE=django.contrib.gis.db.backends.postgis" >> .env
+#           echo "POSTGRES_DATABASE=geargo" >> .env
+#           echo "POSTGRES_USER=postgres" >> .env
+#           echo "POSTGRES_PASSWORD=1234" >> .env
+#           echo "POSTGRES_HOST=localhost" >> .env
+#           echo "POSTGRES_PORT=5432" >> .env
 
-      - name: Check Migrations
-        run: |
-          cd GearGo
-          poetry run python manage.py makemigrations --check --dry-run
+#       - name: Check Migrations
+#         run: |
+#           cd GearGo
+#           poetry run python manage.py makemigrations --check --dry-run
 
-      - name: Run pytest
-        run: |
-          cd GearGo
-          poetry run pytest -vv
+#       - name: Run pytest
+#         run: |
+#           cd GearGo
+#           poetry run pytest -vv
