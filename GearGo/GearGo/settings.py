@@ -14,6 +14,7 @@ from pathlib import Path
 from decouple import config
 import platform
 import json
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,6 +34,17 @@ ALLOWED_HOSTS = json.loads(config('ALLOWED_HOSTS'))
 
 # Application definition
 
+PROJECT_APPS = [
+    'apps.users',
+]
+
+THIRD_PARTY = [
+    'allauth',
+    'allauth.account',
+    'crispy_forms',
+    'crispy_bootstrap5',
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,16 +52,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+] + PROJECT_APPS + THIRD_PARTY
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # django-allauth
 ]
 
 ROOT_URLCONF = 'GearGo.urls'
@@ -57,7 +71,7 @@ ROOT_URLCONF = 'GearGo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,7 +144,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# https://docs.djangoproject.com/en/dev/ref/settings/#static-root
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# https://docs.djangoproject.com/en/dev/ref/settings/#static-url
+STATIC_URL = "/static/"
+
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# https://whitenoise.readthedocs.io/en/latest/django.html
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -140,3 +171,38 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if platform.system() == 'Windows':
     GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal305.dll'
     GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
+
+AUTH_USER_MODEL = "users.CustomUser"
+
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
+
+# https://django-allauth.readthedocs.io/en/latest/installation.html?highlight=backends
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+# django-allauth config
+# https://docs.djangoproject.com/en/dev/ref/settings/#site-id
+SITE_ID = 1
+
+
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+ACCOUNT_SIGNUP_PASSWORD_VERIFICATION = True
+ACCOUNT_EMAIL_VERIFICATION = None
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+
+ACCOUNT_FORMS = {
+    'signup': 'apps.users.forms.CustomSignupForm',
+}
+
+
+# django-crispy-forms
+# https://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
+CRISPY_TEMPLATE_PACK = "bootstrap5"
