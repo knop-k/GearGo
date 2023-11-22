@@ -147,3 +147,6 @@ if platform.system() == 'Windows':
     GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
 
 AUTH_USER_MODEL = "users.CustomUser"
+
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
