@@ -144,3 +144,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if platform.system() == 'Windows':
     GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal305.dll'
     GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
+
+AUTH_USER_MODEL = "users.CustomUser"
