@@ -41,6 +41,8 @@ PROJECT_APPS = [
 THIRD_PARTY = [
     'allauth',
     'allauth.account',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 INSTALLED_APPS = [
@@ -175,3 +177,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
+
+# django-crispy-forms
+# https://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
+CRISPY_TEMPLATE_PACK = "bootstrap5"
